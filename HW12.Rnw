@@ -105,16 +105,64 @@ alternative.
   Specifically, generate samples of size $n=15$ from the Beta(10,2), Beta(2,10), 
   and Beta(10,10) distributions and conduct the following hypothesis tests against 
   the actual mean for each case (e.g., $\frac{10}{10+2}$, $\frac{2}{10+2}$, and 
-  $\frac{10}{10+10}$). 
+  $\frac{10}{10+10}$).
+  <<>>=
+  simulation.of.type.1.error.func <- function(num.sims, n, parameter.1, parameter.2, test.type = "two_sided", alpha = .05){
+    true.mean <- parameter.1 / (parameter.1 + parameter.2)
+    errors <- 0
+    
+    for (i in 1:num.sims){
+      dat <- rbeta(n,parameter.1,parameter.2)
+      
+      test <- t.test(dat, mu = true.mean, alternative = test.type)
+      
+      if (test$p.value < alpha){
+        errors <- errors + 1
+      }
+    }
+    
+    return (errors/ num.sims)
+  }
+  
+  num.sims <- 1000
+  n <- 15
+  alpha <- .05
+  @
   \begin{enumerate}
     \item What proportion of the time do we make an error of Type I for a
     left-tailed test?
+    <<>>=
+    left.error.10.2 <- simulation.of.type.1.error.func(num.sims, n, 10, 2, "less")
+  (left.error.10.2)
+  left.error.2.10 <- simulation.of.type.1.error.func(num.sims,n, 2,10, "less")
+  (left.error.2.10)
+  left.error.10.10 <- simulation.of.type.1.error.func(num.sims,n,10,10,"less")
+  (left.error.10.10)
+  @
     \item What proportion of the time do we make an error of Type I for a
     right-tailed test?
+    <<>>=
+    right.error.10.2 <- simulation.of.type.1.error.func(num.sims,n, 10,2,"greater")
+  (right.error.10.2)
+  right.error.2.10 <- simulation.of.type.1.error.func(num.sims,n, 2, 10, "greater")
+  (right.error.2.10)
+  right.error.10.10 <- simulation.of.type.1.error.func(num.sims,n, 10,10,"greater")
+  (right.error.10.10)
+  @
     \item What proportion of the time do we make an error of Type I for a
     two-tailed test?
+    <<>>=
+    two.sided.error.10.2 <- simulation.of.type.1.error.func(num.sims,n, 10,2,"two.sided")
+  (two.sided.error.10.2)
+  two.sided.error.2.10 <- simulation.of.type.1.error.func(num.sims,n, 2,10, "two.sided")
+  (two.sided.error.2.10)
+  two.sided.error.10.10 <- simulation.of.type.1.error.func(num.sims,n, 10,10, "two.sided")
+  (two.sided.error.10.10)
+  @
     \item How does skewness of the underlying population distribution effect
     Type I error across the test types?
+    Highly skewed distributions like Beta(10,2) and Beta(2,10) have type I error rates that are different (either above or below) from the original $\alpha = 0.05$.
+    The symmetric Beta(10,10) has type I errors that are closer to .05, which means that the t-test is more robust with symmetric parameters for the beta distribution.
   \end{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

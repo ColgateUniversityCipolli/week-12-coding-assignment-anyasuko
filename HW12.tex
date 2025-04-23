@@ -179,16 +179,119 @@ alternative.
   Specifically, generate samples of size $n=15$ from the Beta(10,2), Beta(2,10), 
   and Beta(10,10) distributions and conduct the following hypothesis tests against 
   the actual mean for each case (e.g., $\frac{10}{10+2}$, $\frac{2}{10+2}$, and 
-  $\frac{10}{10+10}$). 
+  $\frac{10}{10+10}$).
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hldef{simulation.of.type.1.error.func} \hlkwb{<-} \hlkwa{function}\hldef{(}\hlkwc{num.sims}\hldef{,} \hlkwc{n}\hldef{,} \hlkwc{parameter.1}\hldef{,} \hlkwc{parameter.2}\hldef{,} \hlkwc{test.type} \hldef{=} \hlsng{"two_sided"}\hldef{,} \hlkwc{alpha} \hldef{=} \hlnum{.05}\hldef{)\{}
+  \hldef{true.mean} \hlkwb{<-} \hldef{parameter.1} \hlopt{/} \hldef{(parameter.1} \hlopt{+} \hldef{parameter.2)}
+  \hldef{errors} \hlkwb{<-} \hlnum{0}
+
+  \hlkwa{for} \hldef{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hldef{num.sims)\{}
+    \hldef{dat} \hlkwb{<-} \hlkwd{rbeta}\hldef{(n,parameter.1,parameter.2)}
+
+    \hldef{test} \hlkwb{<-} \hlkwd{t.test}\hldef{(dat,} \hlkwc{mu} \hldef{= true.mean,} \hlkwc{alternative} \hldef{= test.type)}
+
+    \hlkwa{if} \hldef{(test}\hlopt{$}\hldef{p.value} \hlopt{<} \hldef{alpha)\{}
+      \hldef{errors} \hlkwb{<-} \hldef{errors} \hlopt{+} \hlnum{1}
+    \hldef{\}}
+  \hldef{\}}
+
+  \hlkwd{return} \hldef{(errors}\hlopt{/} \hldef{num.sims)}
+\hldef{\}}
+
+\hldef{num.sims} \hlkwb{<-} \hlnum{1000}
+\hldef{n} \hlkwb{<-} \hlnum{15}
+\hldef{alpha} \hlkwb{<-} \hlnum{.05}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
   \begin{enumerate}
     \item What proportion of the time do we make an error of Type I for a
     left-tailed test?
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hldef{left.error.10.2} \hlkwb{<-} \hlkwd{simulation.of.type.1.error.func}\hldef{(num.sims, n,} \hlnum{10}\hldef{,} \hlnum{2}\hldef{,} \hlsng{"less"}\hldef{)}
+  \hldef{(left.error.10.2)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.035
+\end{verbatim}
+\begin{alltt}
+  \hldef{left.error.2.10} \hlkwb{<-} \hlkwd{simulation.of.type.1.error.func}\hldef{(num.sims,n,} \hlnum{2}\hldef{,}\hlnum{10}\hldef{,} \hlsng{"less"}\hldef{)}
+  \hldef{(left.error.2.10)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.079
+\end{verbatim}
+\begin{alltt}
+  \hldef{left.error.10.10} \hlkwb{<-} \hlkwd{simulation.of.type.1.error.func}\hldef{(num.sims,n,}\hlnum{10}\hldef{,}\hlnum{10}\hldef{,}\hlsng{"less"}\hldef{)}
+  \hldef{(left.error.10.10)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.035
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
     \item What proportion of the time do we make an error of Type I for a
     right-tailed test?
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hldef{right.error.10.2} \hlkwb{<-} \hlkwd{simulation.of.type.1.error.func}\hldef{(num.sims,n,} \hlnum{10}\hldef{,}\hlnum{2}\hldef{,}\hlsng{"greater"}\hldef{)}
+  \hldef{(right.error.10.2)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.091
+\end{verbatim}
+\begin{alltt}
+  \hldef{right.error.2.10} \hlkwb{<-} \hlkwd{simulation.of.type.1.error.func}\hldef{(num.sims,n,} \hlnum{2}\hldef{,} \hlnum{10}\hldef{,} \hlsng{"greater"}\hldef{)}
+  \hldef{(right.error.2.10)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.032
+\end{verbatim}
+\begin{alltt}
+  \hldef{right.error.10.10} \hlkwb{<-} \hlkwd{simulation.of.type.1.error.func}\hldef{(num.sims,n,} \hlnum{10}\hldef{,}\hlnum{10}\hldef{,}\hlsng{"greater"}\hldef{)}
+  \hldef{(right.error.10.10)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.057
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
     \item What proportion of the time do we make an error of Type I for a
     two-tailed test?
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hldef{two.sided.error.10.2} \hlkwb{<-} \hlkwd{simulation.of.type.1.error.func}\hldef{(num.sims,n,} \hlnum{10}\hldef{,}\hlnum{2}\hldef{,}\hlsng{"two.sided"}\hldef{)}
+  \hldef{(two.sided.error.10.2)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.065
+\end{verbatim}
+\begin{alltt}
+  \hldef{two.sided.error.2.10} \hlkwb{<-} \hlkwd{simulation.of.type.1.error.func}\hldef{(num.sims,n,} \hlnum{2}\hldef{,}\hlnum{10}\hldef{,} \hlsng{"two.sided"}\hldef{)}
+  \hldef{(two.sided.error.2.10)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.062
+\end{verbatim}
+\begin{alltt}
+  \hldef{two.sided.error.10.10} \hlkwb{<-} \hlkwd{simulation.of.type.1.error.func}\hldef{(num.sims,n,} \hlnum{10}\hldef{,}\hlnum{10}\hldef{,} \hlsng{"two.sided"}\hldef{)}
+  \hldef{(two.sided.error.10.10)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.052
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
     \item How does skewness of the underlying population distribution effect
     Type I error across the test types?
+    Highly skewed distributions like Beta(10,2) and Beta(2,10) have type I error rates that are different (either above or below) from the original $\alpha = 0.05$.
+    The symmetric Beta(10,10) has type I errors that are closer to .05, which means that the t-test is more robust with symmetric parameters for the beta distribution.
   \end{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
